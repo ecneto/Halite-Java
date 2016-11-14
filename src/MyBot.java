@@ -12,38 +12,26 @@ public class MyBot {
         myID = iPackage.myID;
         gameMap = iPackage.map;
 
+        Logger.init();
         Networking.sendInit("NetoBot");
+        Logger.write("Initialized");
 
-        while(true) {
-            moves = new ArrayList<Move>();
-            gameMap = Networking.getFrame();
+        try {
+            while (true) {
+                moves = new ArrayList<Move>();
+                gameMap = Networking.getFrame();
 
-            numMySites = countMySites();
+                numMySites = countMySites();
 
-            for(int y = 0; y < gameMap.height; y++) {
-                for(int x = 0; x < gameMap.width; x++) {
-                    Site site = gameMap.getSite(new Location(x, y));
-                    if(site.owner == myID) {
-                        MoveStrategy strategy;
+                MovesStrategy strategy = new ProductionCumulationStrategy(gameMap, myID);
+                moves.addAll(strategy.getMoves());
 
-                        int growthSize;
-                        if(numMySites < 5) {
-                            growthSize = 20;
-                        } else {
-                            growthSize = Math.max(site.production*6, 20);
-                        }
-
-                        int myStrength = site.strength;
-                        if (myStrength < growthSize) {
-                            strategy = new GrowStrategy(x, y, growthSize);
-                        } else {
-                            strategy = new ProductionLineStrategy(x, y, gameMap, myID);
-                        }
-                        moves.add(strategy.getMove());
-                    }
-                }
+                Networking.sendFrame(moves);
             }
-            Networking.sendFrame(moves);
+        } catch(Exception e){
+        } finally {
+            Logger.write("Ended");
+            Logger.finish();
         }
     }
 

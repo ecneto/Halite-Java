@@ -1,7 +1,7 @@
 /**
  * Created by enet on 11/11/16.
  */
-public class GrowStrategy implements MoveStrategy {
+public class GrowStrategy implements MovesStrategy {
     int size;
     Move move;
 

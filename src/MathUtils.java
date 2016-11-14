@@ -16,4 +16,16 @@ public class MathUtils {
         float epsilon = 0.00001f;
         return (Math.abs(a - b) < epsilon);
     }
+
+    public static int getDXByDirection(Direction dir) {
+        if(dir == Direction.EAST) return  1;
+        else if(dir == Direction.WEST) return -1;
+        else return 0;
+    }
+
+    public static int getDYByDirection(Direction dir) {
+        if(dir == Direction.SOUTH) return  1;
+        else if(dir == Direction.NORTH) return -1;
+        else return 0;
+    }
 }
