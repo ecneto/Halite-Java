@@ -24,38 +24,39 @@ public class ProductionLineStrategy implements MoveStrategy {
     }
 
     Direction decideDirection() {
-        int oppNorth = countProductionOpp(0, -1);
-        int oppSouth = countProductionOpp(0, 1);
-        int oppEast = countProductionOpp(1, 0);
-        int oppWest = countProductionOpp(-1, 0);
+        float oppNorth = countProductionOpp(0, -1);
+        float oppSouth = countProductionOpp(0, 1);
+        float oppEast = countProductionOpp(1, 0);
+        float oppWest = countProductionOpp(-1, 0);
 
-        int bestOpp = MathUtils.max(oppNorth, oppSouth, oppEast, oppWest);
+        float bestOpp = MathUtils.max(oppNorth, oppSouth, oppEast, oppWest);
 
-        if(oppNorth == bestOpp) return Direction.NORTH;
-        if(oppSouth == bestOpp) return Direction.SOUTH;
-        if(oppEast == bestOpp) return Direction.EAST;
-        if(oppWest == bestOpp) return Direction.WEST;
+        if(MathUtils.floatEquals(oppNorth, bestOpp)) return Direction.NORTH;
+        if(MathUtils.floatEquals(oppSouth, bestOpp)) return Direction.SOUTH;
+        if(MathUtils.floatEquals(oppEast, bestOpp)) return Direction.EAST;
+        if(MathUtils.floatEquals(oppWest, bestOpp)) return Direction.WEST;
         return Direction.EAST;
     }
 
-    int countProductionOpp(int dirX, int dirY) {
+    float countProductionOpp(int dirX, int dirY) {
         int scanLength;
-        if(dirX == 0) scanLength = gameMap.height*1/2;
-        else scanLength = gameMap.width*1/2;
+        if(dirX == 0) scanLength = gameMap.height*1/3;
+        else scanLength = gameMap.width*1/3;
 
-        int productionOpp = 0;
+        float productionOpp = 0.0f;
         for(int di = 0; di < scanLength; di++){
             int newX = (this.x + di*dirX);
             if(newX >= gameMap.width) newX -= gameMap.width;
-            if(newX < 0) newX = newX += gameMap.width;
+            if(newX < 0) newX += gameMap.width;
             int newY = (this.y + di*dirY);
             if(newY >= gameMap.height) newY -= gameMap.height;
-            if(newY < 0) newX = newY += gameMap.height;
+            if(newY < 0) newY += gameMap.height;
             Location loc = new Location(newX, newY);
             Site site = gameMap.getSite(loc);
 
             if(site.owner != myID) {
-                productionOpp += site.production;
+                float distanceWeight = ((float) scanLength - (float) di) / ((float) scanLength);
+                productionOpp += site.production * distanceWeight;
             }
         }
         return productionOpp;

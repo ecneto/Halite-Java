@@ -28,9 +28,9 @@ public class MyBot {
 
                         int growthSize;
                         if(numMySites < 5) {
-                            growthSize = 15;
-                        } else {
                             growthSize = 20;
+                        } else {
+                            growthSize = Math.max(site.production*6, 20);
                         }
 
                         int myStrength = site.strength;
