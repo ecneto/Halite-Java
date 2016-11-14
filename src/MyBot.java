@@ -2,30 +2,35 @@ import java.util.ArrayList;
 
 public class MyBot {
     static int myID;
-    static ArrayList<Move> moves;
     static GameMap gameMap;
 
-    static int numMySites;
+    static int territorySize;
 
     public static void main(String[] args) throws java.io.IOException {
         InitPackage iPackage = Networking.getInit();
         myID = iPackage.myID;
         gameMap = iPackage.map;
 
-        Logger.init();
         Networking.sendInit("NetoBot");
-        Logger.write("Initialized");
+        Logger.init();
 
         try {
             while (true) {
-                moves = new ArrayList<Move>();
                 gameMap = Networking.getFrame();
 
-                numMySites = countMySites();
+                ArrayList<Move> moves = new ArrayList<Move>();
 
-                MovesStrategy strategy = new ProductionCumulationStrategy(gameMap, myID);
+                territorySize = countMySites();
+
+                MovesStrategy strategy;
+                if(territorySize < 5) {
+                    strategy = new ProductionCumulationWithoutResistanceStrategy(gameMap, myID, gameMap.width/5);
+                } else if (territorySize < 15) {
+                    strategy = new ProductionCumulationWithoutResistanceStrategy(gameMap, myID, gameMap.width/3);
+                } else {
+                    strategy = new ProductionCumulationStrategy(gameMap, myID, gameMap.width/3);
+                }
                 moves.addAll(strategy.getMoves());
-
                 Networking.sendFrame(moves);
             }
         } catch(Exception e){

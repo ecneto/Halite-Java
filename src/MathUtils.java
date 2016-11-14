@@ -11,6 +11,15 @@ public class MathUtils {
         }
         return ret;
     }
+    public static Integer max(Integer... vals) {
+        Integer ret = null;
+        for (Integer val : vals) {
+            if (ret == null || (val != null && val > ret)) {
+                ret = val;
+            }
+        }
+        return ret;
+    }
 
     public static boolean floatEquals(float a, float b) {
         float epsilon = 0.00001f;

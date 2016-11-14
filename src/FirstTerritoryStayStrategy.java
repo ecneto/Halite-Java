@@ -32,6 +32,8 @@ public class FirstTerritoryStayStrategy implements StayStrategy {
     }
 
     boolean decideIfStrongEnough(int x, int y, Direction dir, int startStrength){
+        if(startStrength < 20) return false;
+
         int dx = MathUtils.getDXByDirection(dir);
         int dy = MathUtils.getDYByDirection(dir);
 
@@ -40,7 +42,7 @@ public class FirstTerritoryStayStrategy implements StayStrategy {
         else scanLength = gameMap.width*1/2;
 
         int totalStrength = startStrength;
-        int targetStrength = 255;
+        int targetStrength = 0;
         for(int di = 1; di < scanLength; di++){
             int newX = GameMapUtils.addX(x, di*dx, gameMap);
             int newY = GameMapUtils.addY(y, di*dy, gameMap);
@@ -51,7 +53,7 @@ public class FirstTerritoryStayStrategy implements StayStrategy {
                 int allyStrength = scanSite.strength;
                 totalStrength += allyStrength;
             } else if(scanSite.owner != myID) {
-                targetStrength = scanSite.strength;
+                targetStrength += scanSite.strength;
                 break;
             }
         }
